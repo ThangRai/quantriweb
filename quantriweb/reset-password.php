@@ -15,50 +15,30 @@ if ($conn->connect_error) {
 $error = "";
 $successMessage = "";
 
-// Kiểm tra nếu form đã được gửi
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['email'])) {
-    $email = trim($_POST['email']);
-
-    // Kiểm tra nếu email không rỗng
-    if (empty($email)) {
-        $error = "Vui lòng nhập địa chỉ email!";
+// Kiểm tra nếu người dùng đã nhập OTP và mật khẩu mới
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['otp'], $_POST['new_password'])) {
+    $otp = trim($_POST['otp']);
+    $new_password = trim($_POST['new_password']);
+    
+    // Kiểm tra OTP
+    if (empty($otp) || empty($new_password)) {
+        $error = "Vui lòng nhập mã OTP và mật khẩu mới!";
+    } elseif ($otp != $_SESSION['otp']) {
+        // Kiểm tra mã OTP
+        $error = "Mã OTP không đúng!";
     } else {
-        // Kiểm tra email tồn tại trong cơ sở dữ liệu
-        $sql = "SELECT id, username FROM users WHERE email = ?";
+        // Cập nhật mật khẩu mới mà không mã hóa
+        $user_id = $_SESSION['user_id'];
+
+        $sql = "UPDATE users SET password = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            // Lấy ID người dùng và tạo mã OTP
-            $user = $result->fetch_assoc();
-            $otp = rand(100000, 999999); // Mã OTP ngẫu nhiên
-
-            // Lưu OTP vào cơ sở dữ liệu hoặc session (ví dụ lưu vào session)
-            $_SESSION['otp'] = $otp;
-            $_SESSION['user_id'] = $user['id'];
-
-            // Gửi OTP qua Telegram
-            $telegram_token = "6608663537:AAExeC77L9XmTSK3lpW0Q3zt_kGfC1qKZfA"; // Thay thế bằng token của bạn
-            $telegram_chat_id = "5901907211"; // Thay thế bằng chat ID của người nhận
-
-            // Chuẩn bị tin nhắn
-            $message = "Mã OTP của bạn để đặt lại mật khẩu là: $otp";
-
-            // Gửi tin nhắn qua Telegram
-            $url = "https://api.telegram.org/bot$telegram_token/sendMessage?chat_id=$telegram_chat_id&text=" . urlencode($message);
-            $response = file_get_contents($url);
-
-        // Nếu gửi OTP thành công, chuyển hướng đến trang nhập OTP
-        if ($response) {
-            header('Location: reset-password.php');
-            exit();
+        $stmt->bind_param("si", $new_password, $user_id);
+        
+        if ($stmt->execute()) {
+            $successMessage = "Mật khẩu đã được thay đổi thành công!";
+            unset($_SESSION['otp']); // Xóa OTP sau khi thay đổi mật khẩu thành công
         } else {
-                $error = "Không thể gửi mã OTP qua Telegram. Vui lòng thử lại!";
-            }
-        } else {
-            $error = "Email không tồn tại!";
+            $error = "Có lỗi xảy ra. Vui lòng thử lại!";
         }
     }
 }
@@ -75,7 +55,7 @@ $conn->close();
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Forgot Password</title>
+    <title>SB Admin 2 - Reset Password</title>
 
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
@@ -96,17 +76,17 @@ $conn->close();
                             <div class="col-lg-6">
                                 <div class="p-5">
                                     <div class="text-center">
-                                        <h1 class="h4 text-gray-900 mb-2">Quên Mật Khẩu?</h1>
-                                        <p class="mb-4">Chúng tôi đã gửi mã OTP đến Telegram của bạn!</p>
+                                        <h1 class="h4 text-gray-900 mb-2">Đặt Lại Mật Khẩu</h1>
+                                        <p class="mb-4">Vui lòng nhập mã OTP và mật khẩu mới của bạn.</p>
                                     </div>
                                     <form class="user" method="POST">
                                         <div class="form-group">
-                                            <input type="email" name="email" class="form-control form-control-user" id="exampleInputEmail"
-                                                aria-describedby="emailHelp" placeholder="Nhập địa chỉ email...">
+                                            <input type="text" name="otp" class="form-control form-control-user" placeholder="Nhập mã OTP...">
                                         </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            Gửi OTP
-                                        </button>
+                                        <div class="form-group">
+                                            <input type="password" name="new_password" class="form-control form-control-user" placeholder="Nhập mật khẩu mới...">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-user btn-block">Đổi mật khẩu</button>
                                     </form>
 
                                     <!-- Thông báo thành công hoặc lỗi -->
@@ -130,6 +110,16 @@ $conn->close();
     <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
     <script src="js/sb-admin-2.min.js"></script>
+
+    <script>
+        <?php if (!empty($successMessage)) : ?>
+            // Nếu mật khẩu được thay đổi thành công, hiển thị thông báo và quay lại trang login sau 3 giây
+            setTimeout(function() {
+                alert("Mật khẩu đã được thay đổi thành công!");
+                window.location.href = "login.php";  // Chuyển hướng về trang đăng nhập
+            }, 3000); // 3 giây
+        <?php endif; ?>
+    </script>
 
 </body>
 </html>

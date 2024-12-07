@@ -466,19 +466,63 @@ $role = $_SESSION['role'];  // Nếu bạn cần lấy thông tin vai trò ngư�
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <!-- Hiển thị tên người dùng từ session -->
                                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                                     <?php echo isset($_SESSION['username']) ? $_SESSION['username'] : 'Guest'; ?>
                                 </span>
+
+                                <!-- Ảnh đại diện người dùng -->
                                 <img class="img-profile rounded-circle"
-                                    src="img/undraw_profile.svg">
+                                    src="<?php echo isset($_SESSION['user_id']) ? getUserProfilePic($_SESSION['user_id']) : 'img/undraw_profile.svg'; ?>" alt="Avatar">
                             </a>
+
+                            <?php
+                            // Hàm để lấy ảnh đại diện từ cơ sở dữ liệu
+                            function getUserProfilePic($user_id) {
+                                // Kết nối cơ sở dữ liệu
+                                $servername = "localhost";
+                                $db_username = "root";
+                                $db_password = "";
+                                $dbname = "quantriweb";
+                                $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+                                // Kiểm tra kết nối
+                                if ($conn->connect_error) {
+                                    die("Kết nối thất bại: " . $conn->connect_error);
+                                }
+
+                                // Truy vấn lấy ảnh đại diện của người dùng
+                                $sql = "SELECT profile_pic FROM users WHERE id = ?";
+                                $stmt = $conn->prepare($sql);
+                                $stmt->bind_param("i", $user_id);
+                                $stmt->execute();
+                                $result = $stmt->get_result();
+
+                                if ($result->num_rows > 0) {
+                                    // Lấy đường dẫn ảnh từ cơ sở dữ liệu
+                                    $user = $result->fetch_assoc();
+                                    $profile_pic = $user['profile_pic'];
+
+                                    // Nếu có ảnh đại diện, trả về đường dẫn ảnh
+                                    if (!empty($profile_pic)) {
+                                        return $profile_pic;
+                                    } else {
+                                        // Nếu không có ảnh, trả về ảnh mặc định
+                                        return 'img/undraw_profile.svg';
+                                    }
+                                } else {
+                                    // Nếu không tìm thấy người dùng, trả về ảnh mặc định
+                                    return 'img/undraw_profile.svg';
+                                }
+                            }
+                            ?>
+
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="profile.php">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
