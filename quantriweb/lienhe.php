@@ -344,7 +344,6 @@ $role = $_SESSION['role'];  // Nếu bạn cần lấy thông tin vai trò ngư�
                             </a>
                         </li>
 
-
                         <!-- HTML phần dropdown thông báo -->
                         <li class="nav-item dropdown no-arrow mx-1">
                             <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
@@ -709,191 +708,67 @@ $role = $_SESSION['role'];  // Nếu bạn cần lấy thông tin vai trò ngư�
 
                     <!-- Content Row -->
                     <?php
-// Kết nối cơ sở dữ liệu
+// Kết nối đến cơ sở dữ liệu
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "quantriweb"; // Tên cơ sở dữ liệu của bạn
+$dbname = "quantriweb"; // Thay đổi tên cơ sở dữ liệu
 
+// Tạo kết nối
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Kiểm tra kết nối
 if ($conn->connect_error) {
-    die("Kết nối thất bại: " . $conn->connect_error);
+    die("Connection failed: " . $conn->connect_error);
 }
 
-// Truy vấn tổng doanh thu theo ngày
-$sql_revenue = "SELECT DATE(created_at) AS day, SUM(total_price) AS total_revenue 
-                FROM orders 
-                GROUP BY DATE(created_at) 
-                ORDER BY DATE(created_at) DESC";
-$result_revenue = $conn->query($sql_revenue);
-
-// Truy vấn tổng tiền chi tiêu của khách hàng cho biểu đồ Pie Chart
-$sql_customers = "SELECT customer_name, SUM(total_price) AS total_spent 
-                  FROM orders 
-                  GROUP BY customer_name 
-                  ORDER BY total_spent DESC";
-$result_customers = $conn->query($sql_customers);
-
-// Dữ liệu cho Area Chart (Tổng doanh thu theo ngày)
-$days = [];
-$revenues = [];
-while ($row = $result_revenue->fetch_assoc()) {
-    $days[] = $row['day']; // Ngày
-    $revenues[] = $row['total_revenue']; // Tổng doanh thu
-}
-
-// Dữ liệu cho Pie Chart (Tổng tiền chi tiêu của khách hàng)
-$customers = [];
-$spends = [];
-while ($row = $result_customers->fetch_assoc()) {
-    $customers[] = $row['customer_name']; // Tên khách hàng
-    $spends[] = $row['total_spent']; // Tổng tiền chi tiêu
-}
-
-$conn->close();
+// Truy vấn để lấy thông tin từ bảng contacts
+$sql = "SELECT * FROM contacts"; // Thay đổi tên bảng nếu cần
+$result = $conn->query($sql);
 ?>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <!-- Thêm link đến Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Thêm Bootstrap để styling -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        @media (min-width: 768px) {
-    .chart-pie {
-        height: calc(20rem - 2px) !important;
-    }
-}
-    </style>
-</head>
-<body>
-        <div class="row">
-            <!-- Area Chart -->
-            <div class="col-xl-8 col-lg-7">
-                <div class="card shadow mb-4">
-                    <!-- Card Header - Dropdown -->
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Doanh thu</h6>
-                    </div>
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        <div class="chart-area">
-                            <canvas id="varChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<div class="containerlh">
+    <h2 class="mb-4">Danh Sách Liên Hệ Khách Hàng</h2>
+    
+    <?php
+    // Kiểm tra xem có dữ liệu từ cơ sở dữ liệu không
+    if ($result->num_rows > 0) {
+        echo '<table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Message</th>
+                        <th>Created At</th>
+                    </tr>
+                </thead>
+                <tbody>';
 
-            <!-- Pie Chart -->
-            <div class="col-xl-4 col-lg-5">
-                <div class="card shadow mb-4">
-                    <!-- Card Header -->
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Tổng tiền mua của khách hàng</h6>
-                    </div>
-                    <!-- Card Body -->
-                    <div class="card-body">
-                        <div class="chart-pie pt-4 pb-2">
-                            <canvas id="doughnutChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    <script>
-        // Dữ liệu PHP chuyển sang JavaScript
-        var days = <?php echo json_encode($days); ?>;
-var revenues = <?php echo json_encode($revenues); ?>;
-
-// Biểu đồ Area Chart - Doanh thu theo ngày
-var ctxArea = document.getElementById('varChart').getContext('2d');
-var varChart = new Chart(ctxArea, {
-    type: 'line',
-    data: {
-        labels: days,
-        datasets: [{
-            label: 'Doanh thu',
-            data: revenues,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            fill: true,
-        }]
-    },
-    options: {
-        responsive: true,
-        scales: {
-            y: {
-                beginAtZero: true,
-                title: {
-                    display: true,
-                    text: 'Doanh thu (VND)',
-                }
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: 'Ngày',
-                }
-            }
-        },
-        plugins: {
-            tooltip: {
-                callbacks: {
-                    label: function(tooltipItem) {
-                        return "Doanh thu: " + tooltipItem.raw.toLocaleString() + " VND";
-                    }
-                }
-            }
+        // Lặp qua tất cả các hàng dữ liệu
+        while ($row = $result->fetch_assoc()) {
+            echo '<tr>
+                    <td>' . $row["id"] . '</td>
+                    <td>' . $row["name"] . '</td>
+                    <td>' . $row["email"] . '</td>
+                    <td>' . $row["phone"] . '</td>
+                    <td>' . $row["message"] . '</td>
+                    <td>' . $row["created_at"] . '</td>
+                </tr>';
         }
+
+        echo '</tbody></table>';
+    } else {
+        echo '<p class="alert alert-warning">Chưa có thông tin khách hàng nào.</p>';
     }
-});
+
+    // Đóng kết nối
+    $conn->close();
+    ?>
+
+</div>
 
 
-        // Dữ liệu PHP chuyển sang JavaScript
-    var customers = <?php echo json_encode($customers); ?>; // Tên khách hàng
-    var spends = <?php echo json_encode($spends); ?>;       // Tổng tiền chi tiêu
-
-    // Biểu đồ Pie Chart
-    var ctxPie = document.getElementById('doughnutChart').getContext('2d');
-    var doughnutChart = new Chart(ctxPie, {
-        type: 'pie',
-        data: {
-            labels: customers, // Tên khách hàng
-            datasets: [{
-                data: spends, // Tổng tiền chi tiêu của từng khách hàng
-                backgroundColor: [
-                    '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
-                    '#858796', '#5a5c69', '#d1d3e2', '#6f42c1', '#20c997'
-                ], // Màu sắc cho các phần biểu đồ
-                hoverBackgroundColor: [
-                    '#2e59d9', '#17a673', '#2c9faf', '#f4b400', '#c0392b',
-                    '#6c757d', '#343a40', '#adb5bd', '#5f25a6', '#17a2b8'
-                ],
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(tooltipItem) {
-                            return tooltipItem.label + ": " +
-                                tooltipItem.raw.toLocaleString() + " VND"; // Định dạng hiển thị số tiền
-                        }
-                    }
-                }
-            }
-        }
-    });
-    </script>
-</body>
 
                     
                 <!-- /.container-fluid -->
