@@ -62,7 +62,7 @@ $role = $_SESSION['role'];  // Nếu bạn cần lấy thông tin vai trò ngư�
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" href="adminwed.php">
+                <a class="nav-link" href="adminweb.php">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Tổng quan</span></a>
             </li>
