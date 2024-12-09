@@ -697,6 +697,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
+    <?php
+// Kết nối cơ sở dữ liệu
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "quantriweb";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Kiểm tra kết nối
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+
+// Lấy danh sách tất cả hình ảnh đối tác
+$sql = "SELECT image FROM doitac";
+$result = $conn->query($sql);
+?>
+
+    <style>
+        .partner-gallery {
+            display: flex;
+            overflow-x: auto; /* Thanh cuộn ngang */
+            white-space: nowrap; /* Không xuống hàng */
+            justify-content: space-between;
+            gap: 20px;
+            margin: 20px auto;
+            padding: 10px;
+
+        }
+
+        .partner-gallery img {
+            width: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+                /* Đảm bảo thanh cuộn đẹp trên một số trình duyệt */
+                .partner-gallery::-webkit-scrollbar {
+            height: 8px;
+        }
+        .partner-gallery::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .partner-gallery::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
     <!-- Bản đồ -->
     <div class="map-container">
         <iframe 
@@ -705,10 +755,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             loading="lazy">
         </iframe>
     </div>
-</div>
 
-</body>
-</html>
+    <!-- Danh sách hình ảnh đối tác -->
+    <h1>Đối tác</h1>
+
+    <!-- Danh sách hình ảnh đối tác -->
+    <div class="partner-gallery">
+        <?php while ($row = $result->fetch_assoc()): ?>
+            <img src="<?php echo $row['image']; ?>" alt="Đối Tác">
+        <?php endwhile; ?>
+    </div>
 
 <?php
 // Đóng kết nối
