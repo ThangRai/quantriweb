@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1
--- Thời gian đã tạo: Th10 29, 2024 lúc 10:19 AM
+-- Thời gian đã tạo: Th12 10, 2024 lúc 08:47 AM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.2.12
 
@@ -42,7 +42,59 @@ CREATE TABLE `contacts` (
 
 INSERT INTO `contacts` (`id`, `name`, `email`, `phone`, `message`, `created_at`) VALUES
 (1, 'Lê Văn Thắng', 'badaotulong123@gmail.com', '0914476792', 'cần tư vấn', '2024-11-25 03:31:53'),
-(2, 'Lê Văn Thắng', 'badaotulong123@gmail.com', '0914476792', 'cần tư vấn', '2024-11-25 03:33:46');
+(2, 'Lê Văn Thắng', 'badaotulong123@gmail.com', '0914476792', 'cần tư vấn', '2024-11-25 03:33:46'),
+(3, 'NGUYỄN THỊ NGỌC TRÂM', 'badaotulong123@gmail.com', '0397970507', 'Xin chào admin', '2024-12-07 02:45:49');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `doitac`
+--
+
+CREATE TABLE `doitac` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `image` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `doitac`
+--
+
+INSERT INTO `doitac` (`id`, `name`, `image`, `description`, `status`) VALUES
+(1, 'Doitac1', 'uploads/dt1.png', '', 'active'),
+(2, 'dt2', 'uploads/dt2.png', '', 'active'),
+(3, 'dt3', 'uploads/dt3.png', '', 'active'),
+(4, 'dt4', 'uploads/dt4.png', '', 'active'),
+(5, 'dt5', 'uploads/dt5.png', '', 'active'),
+(7, 'dt6', 'uploads/dt6.png', '', 'active'),
+(11, 'dt7', 'uploads/dt7.png', '', 'active'),
+(20, 'dt8', 'uploads/dt8.png', NULL, 'inactive');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `lienhe`
+--
+
+CREATE TABLE `lienhe` (
+  `id` int(11) NOT NULL,
+  `ten_lienhe` varchar(255) NOT NULL,
+  `duong_dan` varchar(255) NOT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  `trang_thai` tinyint(1) NOT NULL DEFAULT 1,
+  `loai_lienhe` enum('zalo','email','hotline') NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `lienhe`
+--
+
+INSERT INTO `lienhe` (`id`, `ten_lienhe`, `duong_dan`, `image`, `trang_thai`, `loai_lienhe`) VALUES
+(9, 'Hotline', 'tel:0914476792', 'uploads/8418629.png', 1, 'hotline'),
+(10, 'Zalo', 'https://zalo.me/0914476792', 'uploads/2048px-Icon_of_Zalo.svg.jpg', 1, 'zalo');
 
 -- --------------------------------------------------------
 
@@ -95,7 +147,8 @@ INSERT INTO `orders` (`id`, `product_id`, `quantity`, `total_price`, `customer_n
 (3, 2, 9, 3600000.00, 'Lê Văn Thắng', 'thang@gmail.com', '206 Hoàng Hoa Thám Tân Bình', '2024-11-22 03:44:23', 'Chưa xử lý', '0914476792'),
 (4, 4, 6, 2400000.00, 'Nguyễn Thị Minh Thi', 'minhthi@gmail.com', '473/8b lê văn quới bình tân', '2024-11-22 03:48:42', 'Chưa xử lý', '0914476793'),
 (6, 2, 34, 13600000.00, 'Nguyễn Văn A', 'a@gmail.com', 'Hồ Chí Minh', '2024-11-23 01:57:52', 'Chưa xử lý', '0914476795'),
-(7, 2, 12, 4800000.00, 'Lê Văn B', 'levanb@gmail.com', '473/8B Lê Văn Qưới Bình Tân HCM', '2024-11-25 06:13:56', 'Đã thanh toán', '0914476781');
+(7, 2, 12, 4800000.00, 'Lê Văn B', 'levanb@gmail.com', '473/8B Lê Văn Qưới Bình Tân HCM', '2024-11-25 06:13:56', 'Đã thanh toán', '0914476781'),
+(8, 2, 19, 7600000.00, 'ABC', 'abc@gmail.com', 'Hồ Chí Minh', '2024-12-07 04:24:38', 'Chưa xử lý', '0914476799');
 
 -- --------------------------------------------------------
 
@@ -172,6 +225,44 @@ INSERT INTO `slideshow` (`id`, `image_url`, `sort_order`, `caption`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Cấu trúc bảng cho bảng `truycap`
+--
+
+CREATE TABLE `truycap` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `ip_address` varchar(100) DEFAULT NULL,
+  `browser` varchar(255) DEFAULT NULL,
+  `access_time` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `truycap`
+--
+
+INSERT INTO `truycap` (`id`, `user_id`, `username`, `ip_address`, `browser`, `access_time`) VALUES
+(1, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 11:23:29'),
+(2, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 11:23:37'),
+(3, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 11:39:08'),
+(4, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 11:41:50'),
+(5, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 11:43:19'),
+(6, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 12:03:25'),
+(7, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-07 12:14:32'),
+(8, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:40:02'),
+(9, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:44:46'),
+(10, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:46:02'),
+(11, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:48:56'),
+(12, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:52:13'),
+(13, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:54:22'),
+(14, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 10:56:31'),
+(15, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 04:02:55'),
+(16, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-09 04:03:49'),
+(19, 7, 'Thắng Admin', '::1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36', '2024-12-10 04:48:49');
+
+-- --------------------------------------------------------
+
+--
 -- Cấu trúc bảng cho bảng `users`
 --
 
@@ -181,17 +272,18 @@ CREATE TABLE `users` (
   `email` varchar(100) NOT NULL,
   `password` varchar(255) NOT NULL,
   `points` int(11) DEFAULT 0,
-  `role` enum('admin','user') DEFAULT 'user'
+  `role` enum('admin','user') DEFAULT 'user',
+  `profile_pic` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Đang đổ dữ liệu cho bảng `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`, `points`, `role`) VALUES
-(5, 'Admin', 'admin@gmail.com', 'admin', 100, 'user'),
-(7, 'Thắng Admin', 'phimdankhoi@gmail.com', 'admin123', 0, 'admin'),
-(9, 'Thắng', 'thangdesign@gmail.com', '123', 10, 'user');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `points`, `role`, `profile_pic`) VALUES
+(5, 'Admin', 'admin@gmail.com', 'admin', 100, 'user', NULL),
+(7, 'Thắng Admin', 'phimdankhoi@gmail.com', 'thang', 100, 'admin', 'uploads/profile_pics/7.png'),
+(9, 'Thắng', 'thangdesign@gmail.com', '123', 10, 'user', NULL);
 
 --
 -- Chỉ mục cho các bảng đã đổ
@@ -201,6 +293,18 @@ INSERT INTO `users` (`id`, `username`, `email`, `password`, `points`, `role`) VA
 -- Chỉ mục cho bảng `contacts`
 --
 ALTER TABLE `contacts`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `doitac`
+--
+ALTER TABLE `doitac`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `lienhe`
+--
+ALTER TABLE `lienhe`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -235,6 +339,13 @@ ALTER TABLE `slideshow`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Chỉ mục cho bảng `truycap`
+--
+ALTER TABLE `truycap`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Chỉ mục cho bảng `users`
 --
 ALTER TABLE `users`
@@ -250,7 +361,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT cho bảng `contacts`
 --
 ALTER TABLE `contacts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `doitac`
+--
+ALTER TABLE `doitac`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+
+--
+-- AUTO_INCREMENT cho bảng `lienhe`
+--
+ALTER TABLE `lienhe`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT cho bảng `menus`
@@ -262,7 +385,7 @@ ALTER TABLE `menus`
 -- AUTO_INCREMENT cho bảng `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT cho bảng `posts`
@@ -283,6 +406,12 @@ ALTER TABLE `slideshow`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
+-- AUTO_INCREMENT cho bảng `truycap`
+--
+ALTER TABLE `truycap`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+
+--
 -- AUTO_INCREMENT cho bảng `users`
 --
 ALTER TABLE `users`
@@ -297,6 +426,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`);
+
+--
+-- Các ràng buộc cho bảng `truycap`
+--
+ALTER TABLE `truycap`
+  ADD CONSTRAINT `truycap_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
