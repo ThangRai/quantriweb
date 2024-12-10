@@ -770,6 +770,126 @@ $result = $conn->query($sql);
 // Đóng kết nối
 $conn->close();
 ?>
+<?php
+// Kết nối cơ sở dữ liệu
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "quantriweb";
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Kiểm tra kết nối
+if ($conn->connect_error) {
+    die("Kết nối thất bại: " . $conn->connect_error);
+}
+
+// Lấy danh sách liên hệ
+$sql_lienhe = "SELECT * FROM lienhe";
+$result_lienhe = $conn->query($sql_lienhe);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chủ</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"> <!-- Font Awesome cho icon -->
+    <style>
+        /* CSS cho các nút liên hệ cố định */
+        .contact-buttons {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Thiết kế các nút liên hệ */
+        .contact-buttons .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 15px;
+            background-color: #007bff; /* Màu nền */
+            color: white;
+            border-radius: 30px;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng zoom và shadow */
+            width: 160px; /* Kích thước nút */
+            height: 50px;
+        }
+
+        /* Hiệu ứng zoom khi hover */
+        .contact-buttons .btn:hover {
+            transform: scale(1.1); /* Phóng to nút khi di chuột */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Thêm bóng khi hover */
+        }
+
+        /* Thiết kế icon bên trong nút */
+        .contact-buttons .btn i {
+            margin-right: 10px; /* Khoảng cách giữa icon và text */
+            font-size: 20px; /* Kích thước icon */
+        }
+
+        /* Hiệu ứng khi nút đang tải (loading) */
+        .contact-buttons .btn[disabled] {
+            background-color: #ddd;
+            cursor: not-allowed;
+        }
+
+        /* Thiết kế nút trên nền sáng */
+        .contact-buttons .btn-primary {
+            background-color: #007bff;
+        }
+
+        .contact-buttons .btn-primary:hover {
+            background-color: #0056b3; /* Màu khi hover */
+        }
+
+        /* Hiệu ứng khi nút có icon */
+        .contact-buttons .btn img {
+            width: 30px; /* Đảm bảo kích thước icon hình ảnh */
+            height: 30px;
+            object-fit: cover;
+            border-radius: 50%; /* Nếu bạn muốn icon hình tròn */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Nút liên hệ cố định -->
+    <div class="contact-buttons">
+        <?php while ($row_lienhe = $result_lienhe->fetch_assoc()): ?>
+            <a href="<?php echo $row_lienhe['duong_dan']; ?>" class="btn btn-primary" target="_blank">
+                <!-- Bạn có thể thay icon hoặc sử dụng ảnh -->
+                <?php if ($row_lienhe['loai_lienhe'] == 'hotline'): ?>
+                    <i class="fas fa-phone-alt"></i> <!-- Icon Hotline -->
+                <?php elseif ($row_lienhe['loai_lienhe'] == 'email'): ?>
+                    <i class="fas fa-envelope"></i> <!-- Icon Email -->
+                <?php elseif ($row_lienhe['loai_lienhe'] == 'zalo'): ?>
+                    <i class="fas fa-comments"></i> <!-- Icon Zalo -->
+                <?php endif; ?>
+                <?php echo $row_lienhe['ten_lienhe']; ?>
+            </a>
+        <?php endwhile; ?>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>
+
 
 
     <!-- Footer -->

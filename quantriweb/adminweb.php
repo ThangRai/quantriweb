@@ -181,6 +181,20 @@ $role = $_SESSION['role'];  // Nếu bạn cần lấy thông tin vai trò ngư�
                 </div>
             </li>
 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseBtlienehe"
+                    aria-expanded="true" aria-controls="collapseBtlienehe">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Button liên hệ</span>
+                </a>
+                <div id="collapseBtlienehe" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Custom Components:</h6>
+                        <a class="collapse-item" href="thongtinlienhe.php">Thông tin liên hệ</a>
+                   </div>
+                </div>
+            </li>
+
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
