@@ -802,7 +802,7 @@ $result_lienhe = $conn->query($sql_lienhe);
         .contact-buttons {
             position: fixed;
             bottom: 20px;
-            right: 20px;
+            left: 20px;
             z-index: 1000;
             display: flex;
             flex-direction: column;
@@ -889,6 +889,75 @@ $result_lienhe = $conn->query($sql_lienhe);
 <?php
 $conn->close();
 ?>
+<!-- Nút lên đầu trang -->
+<button id="scrollToTopBtn" class="scroll-to-top-btn">
+    <i class="fas fa-chevron-up"></i> <!-- Icon Font Awesome -->
+</button>
+<style>
+    /* Nút lên đầu trang */
+.scroll-to-top-btn {
+    position: fixed;
+    bottom: 20px; /* Cách cạnh dưới */
+    right: 20px; /* Cách cạnh phải */
+    width: 50px;
+    height: 50px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: none; /* Ẩn mặc định */
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    z-index: 1000; /* Đảm bảo nút nổi trên các thành phần khác */
+}
+
+/* Hiển thị nút khi cần */
+.scroll-to-top-btn.show {
+    display: flex; /* Hiển thị nút khi thêm class `show` */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Hiệu ứng ban đầu khi ẩn nút */
+.scroll-to-top-btn.hide {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Thêm hiệu ứng hover */
+.scroll-to-top-btn:hover {
+    background-color: #0056b3; /* Màu nền khi hover */
+    transform: scale(1.1); /* Phóng to nhẹ */
+}
+</style>
+<script>
+    // Lấy phần tử nút
+    const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+
+    // Hàm kiểm tra vị trí cuộn
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) { // Nếu người dùng cuộn xuống quá 200px
+            scrollToTopBtn.classList.add('show');
+            scrollToTopBtn.classList.remove('hide');
+        } else { // Nếu ở gần đầu trang
+            scrollToTopBtn.classList.add('hide');
+            scrollToTopBtn.classList.remove('show');
+        }
+    });
+
+    // Sự kiện bấm vào nút
+    scrollToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Cuộn mượt mà
+        });
+    });
+</script>
+
 
 
 
